@@ -1,0 +1,16 @@
+[
+{
+  "modid": "skatekappa",
+  "name": "skateKAPPA",
+  "description": "Everything is Kappa",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["noeppi_noeppi"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
