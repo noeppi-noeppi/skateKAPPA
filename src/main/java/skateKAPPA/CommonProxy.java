@@ -1,6 +1,5 @@
 package skateKAPPA;
 
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.util.text.translation.LanguageMap;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
