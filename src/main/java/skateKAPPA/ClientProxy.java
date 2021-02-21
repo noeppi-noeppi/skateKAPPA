@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelCow;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.entity.RenderCow;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.Locale;
@@ -44,7 +45,7 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public void renderEntityPre(RenderLivingEvent.Pre<?> event) {
-        if (event.getEntity() instanceof EntityCow && event.getRenderer().getMainModel() instanceof ModelCow) {
+        if (event.getEntity() instanceof EntityCow && event.getRenderer() instanceof RenderCow && event.getRenderer().getMainModel() instanceof ModelCow) {
             if ((event.getEntity().getUniqueID().getMostSignificantBits() & (1 << 5)) != 0) {
                 ModelCow model = (ModelCow) event.getRenderer().getMainModel();
                 if (invisibleModel == null || parent != model) {
@@ -59,9 +60,9 @@ public class ClientProxy extends CommonProxy {
     
     @SubscribeEvent
     public void renderEntityPost(RenderLivingEvent.Post<?> event) {
-        if (event.getEntity() instanceof EntityCow && event.getRenderer().getMainModel() instanceof ModelCow) {
+        if (event.getEntity() instanceof EntityCow && event.getRenderer() instanceof RenderCow && event.getRenderer().getMainModel() instanceof ModelCow) {
             ModelCow model = (ModelCow) event.getRenderer().getMainModel();
-            if (model.head instanceof NothingRenderer) {
+            if (model.head instanceof NothingRenderer && headModel != null) {
                 model.head = headModel;
             }
         }
