@@ -132,7 +132,10 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void itemTooltip(ItemTooltipEvent event) {
         if (!event.getToolTip().isEmpty()) {
-            event.getToolTip().set(0, SkateKAPPA.replaceStr(event.getToolTip().get(0)));
+            event.getToolTip().set(0, SkateKAPPA.replaceExtended(event.getToolTip().get(0)));
+            if (event.getToolTip().get(0).toLowerCase(java.util.Locale.ROOT).contains("kexs")) {
+                event.getToolTip().add(I18n.format("skatekappa.tooltip_kexs"));
+            }
         }
     }
 

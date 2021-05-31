@@ -12,7 +12,7 @@ public class EventListener {
     public void serverChat(ServerChatEvent event) {
         ITextComponent tc = event.getComponent();
         String str = tc.getFormattedText();
-        String rep = SkateKAPPA.replaceStr(str);
+        String rep = SkateKAPPA.replaceExtended(str);
         if (!rep.equalsIgnoreCase(str)) {
             event.setComponent(new TextComponentString(rep));
         }

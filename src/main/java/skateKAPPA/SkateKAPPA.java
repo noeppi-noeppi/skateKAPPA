@@ -15,7 +15,7 @@ public class SkateKAPPA {
 
     public static final String MODID = "skatekappa";
     public static final String MODNAME = "skateKAPPA";
-    public static final String VERSION = "1.0.4";
+    public static final String VERSION = "1.0.5";
     
     @Mod.Instance
     public static SkateKAPPA instance;
@@ -31,15 +31,19 @@ public class SkateKAPPA {
         proxy.registerTranslationHandler();
     }
     
-    public static String replaceStr(String str) {
-        return str.replaceAll("(?i)copper", "Kappa")
-                .replaceAll("(?i)kupfer", "Kappa")
-                .replaceAll("(?i)melon", "Melan")
-                .replaceAll("(?i)dandelion", "Dandeldideldon")
+    public static String replaceExtended(String str) {
+        return replaceStr(str)
                 .replaceAll("(?i)cookies", "KeXs")
                 .replaceAll("(?i)cookie", "KeXs")
                 .replaceAll("(?i)kekse", "KeXs")
                 .replaceAll("(?i)keks", "KeXs");
+    }
+    
+    public static String replaceStr(String str) {
+        return str.replaceAll("(?i)copper", "Kappa")
+                .replaceAll("(?i)kupfer", "Kappa")
+                .replaceAll("(?i)melon", "Melan")
+                .replaceAll("(?i)dandelion", "Dandeldideldon");
     }
     
     @Mod.EventBusSubscriber
