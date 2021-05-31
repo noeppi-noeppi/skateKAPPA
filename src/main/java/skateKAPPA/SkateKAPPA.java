@@ -10,12 +10,12 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = SkateKAPPA.MODID, name = SkateKAPPA.MODNAME, version = SkateKAPPA.VERSION)
+@Mod(modid = SkateKAPPA.MODID, name = SkateKAPPA.MODNAME, version = SkateKAPPA.VERSION, dependencies = "required-after:forge@[14.23.5.2855,)")
 public class SkateKAPPA {
 
     public static final String MODID = "skatekappa";
     public static final String MODNAME = "skateKAPPA";
-    public static final String VERSION = "1.0.3";
+    public static final String VERSION = "1.0.4";
     
     @Mod.Instance
     public static SkateKAPPA instance;
@@ -35,7 +35,11 @@ public class SkateKAPPA {
         return str.replaceAll("(?i)copper", "Kappa")
                 .replaceAll("(?i)kupfer", "Kappa")
                 .replaceAll("(?i)melon", "Melan")
-                .replaceAll("(?i)dandelion", "Dandeldideldon");
+                .replaceAll("(?i)dandelion", "Dandeldideldon")
+                .replaceAll("(?i)cookies", "KeXs")
+                .replaceAll("(?i)cookie", "KeXs")
+                .replaceAll("(?i)kekse", "KeXs")
+                .replaceAll("(?i)keks", "KeXs");
     }
     
     @Mod.EventBusSubscriber
