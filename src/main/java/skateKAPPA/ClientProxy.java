@@ -1,11 +1,15 @@
 package skateKAPPA;
 
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiEditSign;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelCow;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.RenderCow;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
@@ -17,10 +21,13 @@ import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.Locale;
 import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.passive.EntitySheep;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntitySign;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.GuiOpenEvent;
+import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -32,6 +39,7 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ClientProxy extends CommonProxy {
 
@@ -135,6 +143,33 @@ public class ClientProxy extends CommonProxy {
             event.getToolTip().set(0, SkateKAPPA.replaceExtended(event.getToolTip().get(0)));
             if (event.getToolTip().get(0).toLowerCase(java.util.Locale.ROOT).contains("kexs")) {
                 event.getToolTip().add(I18n.format("skatekappa.tooltip_kexs"));
+            }
+        }
+    }
+
+    private static final ResourceLocation MANAGLASS_TEXTURE = new ResourceLocation(SkateKAPPA.MODID, "textures/managlass_notice.png");
+
+    private static final Set<ResourceLocation> MANAGLASS_ITEMS = ImmutableSet.of(
+            new ResourceLocation("botania", "managlass"),
+            new ResourceLocation("botania", "managlasspane")
+    );
+
+    @SubscribeEvent
+    public void renderScreen(GuiScreenEvent.DrawScreenEvent.Post event) {
+        if (!Minecraft.getMinecraft().isGamePaused()) {
+            GuiScreen gui = event.getGui();
+            if (gui instanceof GuiContainer) {
+                GuiContainer container = (GuiContainer) gui;
+                for (Slot slot : container.inventorySlots.inventorySlots) {
+                    if (slot.getHasStack() && MANAGLASS_ITEMS.contains(slot.getStack().getItem().getRegistryName())) {
+                        GlStateManager.pushMatrix();
+                        GlStateManager.translate(0, 0, 1000);
+                        GlStateManager.color(1, 1, 1, 1);
+                        Minecraft.getMinecraft().getTextureManager().bindTexture(MANAGLASS_TEXTURE);
+                        Gui.drawScaledCustomSizeModalRect(((container.width - container.getXSize()) / 2) + slot.xPos - 32, ((container.height - container.getYSize()) / 2) + slot.yPos - 48, 0, 0, 128, 128, 48, 48, 128, 128);
+                        GlStateManager.popMatrix();
+                    }
+                }
             }
         }
     }
