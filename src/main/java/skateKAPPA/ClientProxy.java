@@ -23,6 +23,7 @@ import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
@@ -35,8 +36,11 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -165,11 +169,68 @@ public class ClientProxy extends CommonProxy {
                         GlStateManager.pushMatrix();
                         GlStateManager.translate(0, 0, 1000);
                         GlStateManager.color(1, 1, 1, 1);
+                        GlStateManager.enableBlend();
+                        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                         Minecraft.getMinecraft().getTextureManager().bindTexture(MANAGLASS_TEXTURE);
                         Gui.drawScaledCustomSizeModalRect(((container.width - container.getXSize()) / 2) + slot.xPos - 32, ((container.height - container.getYSize()) / 2) + slot.yPos - 48, 0, 0, 128, 128, 48, 48, 128, 128);
+                        GlStateManager.disableBlend();
                         GlStateManager.popMatrix();
                     }
                 }
+            }
+            try {
+                Class<?> jeiGui = Class.forName("mezz.jei.gui.recipes.RecipesGui");
+                if (jeiGui.isAssignableFrom(gui.getClass())) {
+                    Field recipeLayoutField = jeiGui.getDeclaredField("recipeLayouts");
+                    recipeLayoutField.setAccessible(true);
+                    List<?> layouts = (List<?>) recipeLayoutField.get(gui);
+                    if (!layouts.isEmpty()) {
+                        Class<?> jeiLayout = Class.forName("mezz.jei.gui.recipes.RecipeLayout");
+                        Class<?> jeiGroup = Class.forName("mezz.jei.gui.ingredients.GuiIngredientGroup");
+                        Class<?> jeiIngredient = Class.forName("mezz.jei.gui.ingredients.GuiIngredient");
+                        Field xField = jeiLayout.getDeclaredField("posX");
+                        Field yField = jeiLayout.getDeclaredField("posY");
+                        Field groupField = jeiLayout.getDeclaredField("guiItemStackGroup");
+                        Field ingredientsField = jeiGroup.getDeclaredField("guiIngredients");
+                        Method currentIngredientMethod = jeiIngredient.getDeclaredMethod("getDisplayedIngredient");
+                        Field rectField = jeiIngredient.getDeclaredField("rect");
+                        Field xOffset = jeiIngredient.getDeclaredField("xPadding");
+                        Field yOffset = jeiIngredient.getDeclaredField("yPadding");
+                        xField.setAccessible(true);
+                        yField.setAccessible(true);
+                        groupField.setAccessible(true);
+                        ingredientsField.setAccessible(true);
+                        currentIngredientMethod.setAccessible(true);
+                        rectField.setAccessible(true);
+                        xOffset.setAccessible(true);
+                        yOffset.setAccessible(true);
+                        for (Object layout : layouts) {
+                            int xBase = (Integer) xField.get(layout);
+                            int yBase = (Integer) yField.get(layout);
+                            Object group = groupField.get(layout);
+                            Map<?, ?> ingredients = (Map<?, ?>) ingredientsField.get(group);
+                            for (Object ingredient : ingredients.values()) {
+                                ItemStack stack = (ItemStack) currentIngredientMethod.invoke(ingredient);
+                                if (stack != null && !stack.isEmpty() & MANAGLASS_ITEMS.contains(stack.getItem().getRegistryName())) {
+                                    Rectangle rect = (Rectangle) rectField.get(ingredient);
+                                    int xPadding = (Integer) xOffset.get(ingredient);
+                                    int yPadding = (Integer) yOffset.get(ingredient);
+                                    GlStateManager.pushMatrix();
+                                    GlStateManager.translate(0, 0, 1000);
+                                    GlStateManager.color(1, 1, 1, 1);
+                                    GlStateManager.enableBlend();
+                                    GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                                    Minecraft.getMinecraft().getTextureManager().bindTexture(MANAGLASS_TEXTURE);
+                                    Gui.drawScaledCustomSizeModalRect(xBase + xPadding + (int) rect.getX() - 32, yBase + yPadding + (int) rect.getY() - 48, 0, 0, 128, 128, 48, 48, 128, 128);
+                                    GlStateManager.disableBlend();
+                                    GlStateManager.popMatrix();
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (Exception | NoClassDefFoundError e) {
+                e.printStackTrace();
             }
         }
     }
