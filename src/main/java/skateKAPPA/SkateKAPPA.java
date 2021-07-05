@@ -9,13 +9,14 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import skateKAPPA.trigger.ModTriggers;
 
 @Mod(modid = SkateKAPPA.MODID, name = SkateKAPPA.MODNAME, version = SkateKAPPA.VERSION, dependencies = "required-after:forge@[14.23.5.2855,)")
 public class SkateKAPPA {
 
     public static final String MODID = "skatekappa";
     public static final String MODNAME = "skateKAPPA";
-    public static final String VERSION = "1.0.8";
+    public static final String VERSION = "1.0.9";
     
     @Mod.Instance
     public static SkateKAPPA instance;
@@ -28,6 +29,7 @@ public class SkateKAPPA {
         MinecraftForge.EVENT_BUS.register(proxy);
         MinecraftForge.EVENT_BUS.register(new EventListener());
         Recipes.register();
+        ModTriggers.register();
         proxy.registerTranslationHandler();
     }
     

@@ -230,7 +230,7 @@ public class ClientProxy extends CommonProxy {
                     }
                 }
             } catch (Exception | NoClassDefFoundError e) {
-                e.printStackTrace();
+                //
             }
         }
     }
