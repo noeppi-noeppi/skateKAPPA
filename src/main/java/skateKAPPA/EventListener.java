@@ -16,17 +16,19 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import skateKAPPA.trigger.ModTriggers;
 
+import java.util.UUID;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class EventListener {
-    
+
+    private static final UUID SKATE = UUID.fromString("78a049a7-e802-4b26-a8d7-8021052e637f");
     private static final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(1);
     
     @SubscribeEvent
     public void playerJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.player.world instanceof WorldServer && event.player instanceof EntityPlayerMP) {
+        if (event.player.world instanceof WorldServer && event.player instanceof EntityPlayerMP && SKATE.equals(event.player.getGameProfile().getId())) {
             WorldServer world = (WorldServer) event.player.world;
             executor.schedule(() -> {
                 try {
