@@ -1,5 +1,7 @@
 package skateKAPPA;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -14,9 +16,17 @@ import skateKAPPA.trigger.ModTriggers;
 @Mod(modid = SkateKAPPA.MODID, name = SkateKAPPA.MODNAME, version = SkateKAPPA.VERSION, dependencies = "required-after:forge@[14.23.5.2855,)")
 public class SkateKAPPA {
 
+    public static final Gson GSON;
+    static {
+        GsonBuilder gsonbuilder = new GsonBuilder();
+        gsonbuilder.disableHtmlEscaping();
+        gsonbuilder.setLenient();
+        GSON = gsonbuilder.create();
+    }
+    
     public static final String MODID = "skatekappa";
     public static final String MODNAME = "skateKAPPA";
-    public static final String VERSION = "1.0.9";
+    public static final String VERSION = "1.0.10";
     
     @Mod.Instance
     public static SkateKAPPA instance;

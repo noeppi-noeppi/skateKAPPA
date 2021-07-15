@@ -5,15 +5,46 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import skateKAPPA.trigger.ModTriggers;
 
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 public class EventListener {
+    
+    private static final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(1);
+    
+    @SubscribeEvent
+    public void playerJoin(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.player.world instanceof WorldServer && event.player instanceof EntityPlayerMP) {
+            WorldServer world = (WorldServer) event.player.world;
+            executor.schedule(() -> {
+                try {
+                    if (GithubQuery.checkMerged("sebinside", "LogiSnake", 1)
+                            || GithubQuery.checkMerged("sebinside", "LogiSnake", 2)
+                            || GithubQuery.checkMerged("sebinside", "LogiSnake", 3)) {
+                        // Pull request got merged, grant the advancement on the main thread now.
+                        MinecraftServer server = world.getMinecraftServer();
+                        if (server != null) {
+                            server.addScheduledTask(() -> ModTriggers.LOGISNAKE.trigger((EntityPlayerMP) event.player));
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }, 1, TimeUnit.MILLISECONDS);
+        }
+    }
     
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void serverChat(ServerChatEvent event) {
