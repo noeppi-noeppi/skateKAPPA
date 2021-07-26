@@ -4,6 +4,7 @@ import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
@@ -71,7 +72,7 @@ public class EventListener {
                             event.getEntityPlayer().sendStatusMessage(new TextComponentString("Aber wer ist eigentlich Wolli47 ?"), false);
                         }
                     }
-                } else if (stack.getItem() == Items.SHEARS) {
+                } else if (stack.getItem() instanceof ItemShears) {
                     if (event.getTarget().hasCustomName() && "derniklaas".equalsIgnoreCase(event.getTarget().getCustomNameTag())
                             && !((EntitySheep) event.getTarget()).getSheared() && event.getEntityPlayer() instanceof EntityPlayerMP) {
                         ModTriggers.DERNIK_SHEEP.trigger((EntityPlayerMP) event.getEntityPlayer());
