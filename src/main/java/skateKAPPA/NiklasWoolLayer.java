@@ -1,7 +1,6 @@
 package skateKAPPA;
 
 import net.minecraft.client.model.ModelSheep1;
-import net.minecraft.client.model.ModelSheep2;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderSheep;
 import net.minecraft.client.renderer.entity.layers.LayerSheepWool;
@@ -27,7 +26,7 @@ public class NiklasWoolLayer extends LayerSheepWool {
         if (sheep.hasCustomName() && "derniklaas".equalsIgnoreCase(sheep.getCustomNameTag())) {
             if (!sheep.getSheared() && !sheep.isInvisible()) {
                 this.sheepRenderer.bindTexture(TEXTURE);
-                float hue = ((float) (sheep.ticksExisted % 100) + partialTicks) / 100f;
+                float hue = (((Math.abs(sheep.getUniqueID().getLeastSignificantBits()) % 100) + (float) (sheep.ticksExisted % 100) + partialTicks) % 100) / 100f;
                 int rgb = Color.HSBtoRGB(hue, 0.7f, 0.7f);
                 float r = ((rgb >>> 16) & 0xFF) / 255f;
                 float g = ((rgb >>> 8) & 0xFF) / 255f;
