@@ -25,7 +25,7 @@ public class EventListener {
 
     private static final UUID SKATE = UUID.fromString("78a049a7-e802-4b26-a8d7-8021052e637f");
     private static final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(1);
-    
+
     @SubscribeEvent
     public void playerJoin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.player.world instanceof WorldServer && event.player instanceof EntityPlayerMP && SKATE.equals(event.player.getGameProfile().getId())) {
@@ -47,7 +47,7 @@ public class EventListener {
             }, 1, TimeUnit.MILLISECONDS);
         }
     }
-    
+
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void serverChat(ServerChatEvent event) {
         ITextComponent tc = event.getComponent();
@@ -57,19 +57,25 @@ public class EventListener {
             event.setComponent(new TextComponentString(rep));
         }
     }
-    
+
     @SubscribeEvent(priority = EventPriority.LOW)
     public void entityInteract(PlayerInteractEvent.EntityInteract event) {
-        if (!event.getWorld().isRemote && event.getTarget() instanceof EntitySheep
-                && ((EntitySheep) event.getTarget()).getFleeceColor() == EnumDyeColor.RED) {
+        if (!event.getWorld().isRemote && event.getTarget() instanceof EntitySheep) {
             ItemStack stack = event.getItemStack();
-            if (!stack.isEmpty() && stack.getItem() == Items.NAME_TAG && stack.hasDisplayName()) {
-                String text = stack.getDisplayName();
-                if (text.equalsIgnoreCase("derniklaas") && event.getEntityPlayer() instanceof EntityPlayerMP) {
-                    ModTriggers.DERNIK_SHEEP.trigger((EntityPlayerMP) event.getEntityPlayer());
-                } else if (text.equalsIgnoreCase("Wolli") || text.equalsIgnoreCase("Wolli47")
-                        || text.equalsIgnoreCase("Wolli 47")) {
-                    event.getEntityPlayer().sendStatusMessage(new TextComponentString("Aber wer ist eigentlich Wolli47 ?"), false);
+            if (!stack.isEmpty()) {
+                if (stack.getItem() == Items.NAME_TAG && stack.hasDisplayName()) {
+                    String text = stack.getDisplayName();
+                    if (text.equalsIgnoreCase("Wolli") || text.equalsIgnoreCase("Wolli47")
+                            || text.equalsIgnoreCase("Wolli 47")) {
+                        if (((EntitySheep) event.getTarget()).getFleeceColor() == EnumDyeColor.RED) {
+                            event.getEntityPlayer().sendStatusMessage(new TextComponentString("Aber wer ist eigentlich Wolli47 ?"), false);
+                        }
+                    }
+                } else if (stack.getItem() == Items.SHEARS) {
+                    if (event.getTarget().hasCustomName() && "derniklaas".equalsIgnoreCase(event.getTarget().getCustomNameTag())
+                            && !((EntitySheep) event.getTarget()).getSheared() && event.getEntityPlayer() instanceof EntityPlayerMP) {
+                        ModTriggers.DERNIK_SHEEP.trigger((EntityPlayerMP) event.getEntityPlayer());
+                    }
                 }
             }
         }
