@@ -9,9 +9,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.PlayerPickupXpEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -77,6 +79,26 @@ public class EventListener {
                             && !((EntitySheep) event.getTarget()).getSheared() && event.getEntityPlayer() instanceof EntityPlayerMP) {
                         ModTriggers.DERNIK_SHEEP.trigger((EntityPlayerMP) event.getEntityPlayer());
                     }
+                }
+            }
+        }
+    }
+    
+    @SubscribeEvent
+    public void levelChange(PlayerPickupXpEvent event) {
+        if (!event.getEntityPlayer().world.isRemote && event.getEntityPlayer() instanceof EntityPlayerMP) {
+            if (event.getEntityPlayer().world.provider.getDimensionType() == DimensionType.NETHER) {
+                int xp = event.getOrb().getXpValue();
+                float xpBefore = event.getEntityPlayer().experience;
+                int levelBefore = event.getEntityPlayer().experienceLevel;
+                int totalBefore = event.getEntityPlayer().experienceTotal;
+                event.getEntityPlayer().addExperience(xp);
+                int levelAfter = event.getEntityPlayer().experienceLevel;
+                event.getEntityPlayer().experience = xpBefore;
+                event.getEntityPlayer().experienceLevel = levelBefore;
+                event.getEntityPlayer().experienceTotal = totalBefore;
+                if (levelBefore != 66 && levelAfter == 66) {
+                    ModTriggers.NETHER66.trigger((EntityPlayerMP) event.getEntityPlayer());
                 }
             }
         }
