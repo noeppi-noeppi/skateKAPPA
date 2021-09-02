@@ -26,7 +26,7 @@ public class SkateKAPPA {
     
     public static final String MODID = "skatekappa";
     public static final String MODNAME = "skateKAPPA";
-    public static final String VERSION = "1.0.14";
+    public static final String VERSION = "1.0.15";
     
     @Mod.Instance
     public static SkateKAPPA instance;

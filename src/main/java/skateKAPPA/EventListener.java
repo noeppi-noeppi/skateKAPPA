@@ -1,17 +1,22 @@
 package skateKAPPA;
 
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerPickupXpEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -19,6 +24,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import skateKAPPA.trigger.ModTriggers;
 
+import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -63,10 +70,10 @@ public class EventListener {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void entityInteract(PlayerInteractEvent.EntityInteract event) {
-        if (!event.getWorld().isRemote && event.getTarget() instanceof EntitySheep) {
+        if (event.getTarget() instanceof EntitySheep) {
             ItemStack stack = event.getItemStack();
             if (!stack.isEmpty()) {
-                if (stack.getItem() == Items.NAME_TAG && stack.hasDisplayName()) {
+                if (!event.getWorld().isRemote && stack.getItem() == Items.NAME_TAG && stack.hasDisplayName()) {
                     String text = stack.getDisplayName();
                     if (text.equalsIgnoreCase("Wolli") || text.equalsIgnoreCase("Wolli47")
                             || text.equalsIgnoreCase("Wolli 47")) {
@@ -77,7 +84,20 @@ public class EventListener {
                 } else if (stack.getItem() instanceof ItemShears) {
                     if (event.getTarget().hasCustomName() && "derniklaas".equalsIgnoreCase(event.getTarget().getCustomNameTag())
                             && !((EntitySheep) event.getTarget()).getSheared() && event.getEntityPlayer() instanceof EntityPlayerMP) {
-                        ModTriggers.DERNIK_SHEEP.trigger((EntityPlayerMP) event.getEntityPlayer());
+                        if (!event.getWorld().isRemote) {
+                            ModTriggers.DERNIK_SHEEP.trigger((EntityPlayerMP) event.getEntityPlayer());
+                            List<ItemStack> stacks = ((EntitySheep) event.getTarget()).onSheared(stack, event.getWorld(), event.getTarget().getPosition(), 0);
+                            for (ItemStack s : stacks) {
+                                EntityItem entityitem = event.getTarget().entityDropItem(new ItemStack(ModBlocks.rainbowWool, s.getCount()), 1);
+                                if (entityitem != null) {
+                                    entityitem.motionX += (((EntitySheep) event.getTarget()).getRNG().nextFloat() - ((EntitySheep) event.getTarget()).getRNG().nextFloat()) * 0.1f;
+                                    entityitem.motionY += ((EntitySheep) event.getTarget()).getRNG().nextFloat() * 0.05f;
+                                    entityitem.motionZ += (((EntitySheep) event.getTarget()).getRNG().nextFloat() - ((EntitySheep) event.getTarget()).getRNG().nextFloat()) * 0.1f;
+                                }
+                            }
+                        }
+                        event.setCanceled(true);
+                        event.setCancellationResult(EnumActionResult.SUCCESS);
                     }
                 }
             }
